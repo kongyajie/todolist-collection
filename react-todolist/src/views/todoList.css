@@ -1,0 +1,11 @@
+.todo-wrapper {
+  max-width: 300px;
+}
+
+.todo-item {
+  display: flex;
+}
+
+.todo-label {
+  margin-right: 10px;
+}
