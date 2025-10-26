@@ -1,58 +1,38 @@
-import { useEffect, useState, type SyntheticEvent, type KeyboardEvent } from 'react';
-import './todoList.css';
-
-interface TodoItem {
-  id: number,
-  name: string,
-}
+import { useEffect } from "react";
+import "./todoList.css";
+import TodoInput from "../components/TodoInput";
+import TodoItem from "../components/TodoItem";
+import TodoStats from "../components/TodoStats";
+import useTodoList from "../hooks/useTodoList";
 
 export default function TodoList() {
-  const [todoList, setTodoList] = useState<TodoItem[]>([]);
-  const [value, setValue] = useState('');
-
-  const handleInputChange = (e: SyntheticEvent) => {
-    setValue((e.target as HTMLInputElement).value);
-  }
-
-  const handleAdd = () => {
-    if (value.trim() === '') return;
-
-    setTodoList([...todoList, {
-      id: todoList.length + 1,
-      name: value,
-    }])
-    setValue('');
-  }
-
-  const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      handleAdd();
-    }
-  }
+  const { todoList, addTodo, deleteTodo } = useTodoList();
 
   useEffect(() => {
     console.info(JSON.parse(JSON.stringify(todoList)));
-  }, [todoList])
+  }, [todoList]);
 
-  const handleDelItem = (id: number) => {
-    setTodoList(todoList.filter(item => item.id !== id));
-  }
   return (
-    <div className='todo-wrapper'>
-      {/* 待办列表 */}
-      <input type="text" value={value} onChange={handleInputChange} onKeyDown={handleInputKeyDown}/>
-      <button onClick={handleAdd}>+Add</button>
+    <div className="todo-wrapper">
+      {/* TodoInput */}
+      <TodoInput onAdd={addTodo} />
+
+      {/* TodoItem */}
       <ul>
         {todoList.map((item, index) => (
-          <li className='todo-item' key={item.id}>
-            <span className='todo-label'>{index + 1}.{item.name}</span>
-            <button onClick={() => handleDelItem(item.id)}>x</button>
-          </li>
+          <TodoItem
+            key={item.id}
+            item={item}
+            index={index}
+            onDelete={deleteTodo}
+          />
         ))}
       </ul>
-      <p>Total num is: {todoList.length}</p>
+
+      {/* TodoStats */}
+      <TodoStats total={todoList.length} />
     </div>
-  )
+  );
 }
 
 /**
@@ -63,4 +43,11 @@ export default function TodoList() {
  * 5、键盘事件：<input onKeyDown={handleOnKeyDown}> if(e.key === 'Enter')xxx
  * 6、打印更新后的列表：useEffect(() => console.info(xxx))
  * 7、添加样式：单独的css文件
+ */
+
+/**
+ * 组件拆分
+ * 1、TodoInput：输入框+添加按钮，输入内容回车或点击按钮添加待办事项
+ * 2、TodoItem：待办事项列表项，显示待办事项内容+删除按钮
+ * 3、TodoStats：待办事项统计，显示待办事项总数
  */
