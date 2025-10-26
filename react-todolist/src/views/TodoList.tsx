@@ -1,4 +1,4 @@
-import { useEffect, useState, type SyntheticEvent } from 'react';
+import { useEffect, useState, type SyntheticEvent, type KeyboardEvent } from 'react';
 import './todoList.css';
 
 interface TodoItem {
@@ -24,7 +24,7 @@ export default function TodoList() {
     setValue('');
   }
 
-  const handleInputKeyDown = (e) => {
+  const handleInputKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       handleAdd();
     }
